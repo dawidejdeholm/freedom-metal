@@ -5,6 +5,10 @@
 #include <metal/hpm.h>
 #include <stdint.h>
 
+#ifdef __ICCRISCV__
+#define __asm__ asm
+#endif
+
 /* Macro to generate code within a switch case */
 #define METAL_HPM_HANDLE_SWITCH(m)                                             \
     m(3) m(4) m(5) m(6) m(7) m(8) m(9) m(10) m(11) m(12) m(13) m(14) m(15)     \

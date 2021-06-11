@@ -6,6 +6,10 @@
 #include <metal/machine.h>
 #include <metal/machine/platform.h>
 
+#ifdef __ICCRISCV__
+#define __asm__ asm
+#endif
+
 #define METAL_REG(base, offset) (((unsigned long)(base) + (offset)))
 #define METAL_REGW(base, offset)                                               \
     (__METAL_ACCESS_ONCE((__metal_io_u32 *)METAL_REG((base), (offset))))
