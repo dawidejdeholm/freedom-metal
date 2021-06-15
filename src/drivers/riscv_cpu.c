@@ -119,13 +119,20 @@ void __metal_default_interrupt_handler(int id, void *priv) {
 }
 
 /* The metal_interrupt_vector_handler() function can be redefined. */
-void __attribute__((weak, interrupt)) metal_interrupt_vector_handler(void) {
+#ifndef __ICCRISCV__
+void __attribute__((weak, interrupt)) metal_interrupt_vector_handler (void) {
+#else
+__weak __interrupt void metal_interrupt_vector_handler (void) {
+#endif
     metal_shutdown(300);
 }
 
 /* The metal_software_interrupt_vector_handler() function can be redefined. */
-void __attribute__((weak, interrupt))
-metal_software_interrupt_vector_handler(void) {
+#ifndef __ICCRISCV__
+void __attribute__((weak, interrupt)) metal_software_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_software_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_SW);
 }
 
@@ -144,10 +151,14 @@ void __metal_default_sw_handler(int id, void *priv) {
 }
 
 /* The metal_timer_interrupt_vector_handler() function can be redefined. */
-void __attribute__((weak, interrupt))
-metal_timer_interrupt_vector_handler(void) {
+#ifndef __ICCRISCV__
+void __attribute__((weak, interrupt)) metal_timer_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_timer_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_TMR);
 }
+
 
 void __metal_default_beu_handler(int id, void *priv) {}
 
@@ -160,8 +171,11 @@ void __metal_default_timer_handler(int id, void *priv) {
 }
 
 /* The metal_external_interrupt_vector_handler() function can be redefined. */
-void __attribute__((weak, interrupt))
-metal_external_interrupt_vector_handler(void) {
+#ifndef __ICCRISCV__
+void __attribute__((weak, interrupt)) metal_external_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_external_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_EXT);
 }
 
@@ -211,88 +225,146 @@ void __metal_exception_handler(void) {
 }
 
 /* The metal_lc0_interrupt_vector_handler() function can be redefined. */
+#ifndef __ICCRISCV__
 void __attribute__((weak, interrupt)) metal_lc0_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_lc0_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_LC0);
 }
 
 /* The metal_lc1_interrupt_vector_handler() function can be redefined. */
+#ifndef __ICCRISCV__
 void __attribute__((weak, interrupt)) metal_lc1_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_lc1_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_LC1);
 }
 
 /* The metal_lc2_interrupt_vector_handler() function can be redefined. */
+#ifndef __ICCRISCV__
 void __attribute__((weak, interrupt)) metal_lc2_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_lc2_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_LC2);
 }
 
 /* The metal_lc3_interrupt_vector_handler() function can be redefined. */
+#ifndef __ICCRISCV__
 void __attribute__((weak, interrupt)) metal_lc3_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_lc3_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_LC3);
 }
 
 /* The metal_lc4_interrupt_vector_handler() function can be redefined. */
+#ifndef __ICCRISCV__
 void __attribute__((weak, interrupt)) metal_lc4_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_lc4_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_LC4);
 }
 
 /* The metal_lc5_interrupt_vector_handler() function can be redefined. */
+#ifndef __ICCRISCV__
 void __attribute__((weak, interrupt)) metal_lc5_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_lc5_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_LC5);
 }
 
 /* The metal_lc6_interrupt_vector_handler() function can be redefined. */
+#ifndef __ICCRISCV__
 void __attribute__((weak, interrupt)) metal_lc6_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_lc6_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_LC6);
 }
 
 /* The metal_lc7_interrupt_vector_handler() function can be redefined. */
+#ifndef __ICCRISCV__
 void __attribute__((weak, interrupt)) metal_lc7_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_lc7_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_LC7);
 }
 
 /* The metal_lc8_interrupt_vector_handler() function can be redefined. */
+#ifndef __ICCRISCV__
 void __attribute__((weak, interrupt)) metal_lc8_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_lc8_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_LC8);
 }
 
 /* The metal_lc9_interrupt_vector_handler() function can be redefined. */
+#ifndef __ICCRISCV__
 void __attribute__((weak, interrupt)) metal_lc9_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_lc9_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_LC9);
 }
 
 /* The metal_lc10_interrupt_vector_handler() function can be redefined. */
-void __attribute__((weak, interrupt))
-metal_lc10_interrupt_vector_handler(void) {
+#ifndef __ICCRISCV__
+void __attribute__((weak, interrupt)) metal_lc10_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_lc10_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_LC10);
 }
 
 /* The metal_lc11_interrupt_vector_handler() function can be redefined. */
-void __attribute__((weak, interrupt))
-metal_lc11_interrupt_vector_handler(void) {
+#ifndef __ICCRISCV__
+void __attribute__((weak, interrupt)) metal_lc11_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_lc11_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_LC11);
 }
 
 /* The metal_lc12_interrupt_vector_handler() function can be redefined. */
-void __attribute__((weak, interrupt))
-metal_lc12_interrupt_vector_handler(void) {
+#ifndef __ICCRISCV__
+void __attribute__((weak, interrupt)) metal_lc12_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_lc12_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_LC12);
 }
 
 /* The metal_lc13_interrupt_vector_handler() function can be redefined. */
-void __attribute__((weak, interrupt))
-metal_lc13_interrupt_vector_handler(void) {
+#ifndef __ICCRISCV__
+void __attribute__((weak, interrupt)) metal_lc3_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_lc13_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_LC13);
 }
 
 /* The metal_lc14_interrupt_vector_handler() function can be redefined. */
-void __attribute__((weak, interrupt))
-metal_lc14_interrupt_vector_handler(void) {
+#ifndef __ICCRISCV__
+void __attribute__((weak, interrupt)) metal_lc14_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_lc14_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_LC14);
 }
 
 /* The metal_lc15_interrupt_vector_handler() function can be redefined. */
-void __attribute__((weak, interrupt))
-metal_lc15_interrupt_vector_handler(void) {
+#ifndef __ICCRISCV__
+void __attribute__((weak, interrupt)) metal_lc15_interrupt_vector_handler(void) {
+#else
+__weak __interrupt void metal_lc15_interrupt_vector_handler(void) {
+#endif
     __METAL_IRQ_VECTOR_HANDLER(METAL_INTERRUPT_ID_LC15);
 }
 

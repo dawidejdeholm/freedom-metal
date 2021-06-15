@@ -4,6 +4,7 @@
 #include <metal/cache.h>
 #include <metal/machine.h>
 
+
 /* Macros to generate driver prefix string */
 #ifdef METAL_CACHE_DRIVER_PREFIX
 #define METAL_FUNC_STR(a, b) a##_##b
@@ -163,20 +164,29 @@ int metal_icache_l1_available(int hartid) {
 void metal_dcache_l1_flush(int hartid, uintptr_t address) {
     if (metal_dcache_l1_available(hartid)) {
         if (address) {
+#ifndef __ICCRISCV__
             uintptr_t ms1 = 0, ms2 = 0;
-            __asm__ __volatile__("csrr %0, mtvec \n\t"
-                                 "la %1, 1f \n\t"
+             __asm__ __volatile__("csrr %0, mtvec \n\t"
+                                 //"la %1, 1f \n\t" // TODO: Fix this
                                  "csrw mtvec, %1 \n\t"
                                  ".insn i 0x73, 0, x0, %2, -0x40 \n\t"
-                                 ".align 2\n\t"
-                                 "1: \n\t"
+                                 //".align 2\n\t"
+                                 //"1: \n\t"
                                  "csrw mtvec, %0 \n\t"
                                  : "+r"(ms1), "+r"(ms2)
                                  : "r"(address));
+#else 
+            __asm__ __volatile__ (".insn i 0x73, 0, x0, %0, -0x40" : : "r" (address));
+            __asm__ __volatile__ ("fence.i");         // FENCE
+#endif
             // Using ‘.insn’ pseudo directive:
             //       '.insn i opcode, func3, rd, rs1, simm12'
         } else {
+#ifndef __ICCRISCV__
             __asm__ __volatile__(".word 0xfc000073" : : : "memory");
+#else
+            __asm__ __volatile__("DC32 0xfc000073" : : : "memory");
+#endif
         }
     }
 }
@@ -203,19 +213,28 @@ void metal_dcache_l1_discard(int hartid, uintptr_t address) {
     if (metal_dcache_l1_available(hartid)) {
         if (address) {
             uintptr_t ms1 = 0, ms2 = 0;
+#ifndef __ICCRISCV__
             __asm__ __volatile__("csrr %0, mtvec \n\t"
-                                 "la %1, 1f \n\t"
+                                // "la %1, 1f \n\t"
                                  "csrw mtvec, %1 \n\t"
                                  ".insn i 0x73, 0, x0, %2, -0x3E \n\t"
-                                 ".align 2\n\t"
-                                 "1: \n\t"
+                                // ".align 2\n\t"
+                                // "1: \n\t"
                                  "csrw mtvec, %0 \n\t"
                                  : "+r"(ms1), "+r"(ms2)
                                  : "r"(address));
+#else
+          __asm__ __volatile__ (".insn i 0x73, 0, x0, %0, -0x3E" : : "r" (address));
+          __asm__ __volatile__ ("fence.i");         // FENCE
+#endif
             // Using ‘.insn’ pseudo directive:
             //       '.insn i opcode, func3, rd, rs1, simm12'
         } else {
+#ifndef __ICCRISCV__
             __asm__ __volatile__(".word 0xfc200073" : : : "memory");
+#else
+            __asm__ __volatile__("DC32 0xfc200073" : : : "memory");
+#endif
         }
     }
 }

@@ -18,8 +18,7 @@ __metal_clint0_mtime_get(struct __metal_driver_riscv_clint0 *clint) {
 
     /* Guard against rollover when reading */
     do {
-        hi = __METAL_ACCESS_ONCE(
-            (__metal_io_u32 *)(control_base + METAL_RISCV_CLINT0_MTIME + 4));
+        hi = __METAL_ACCESS_ONCE((__metal_io_u32 *)(control_base + METAL_RISCV_CLINT0_MTIME + 4));
         lo = __METAL_ACCESS_ONCE(
             (__metal_io_u32 *)(control_base + METAL_RISCV_CLINT0_MTIME));
     } while (__METAL_ACCESS_ONCE((__metal_io_u32 *)(control_base +

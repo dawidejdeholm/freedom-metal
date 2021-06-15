@@ -1,6 +1,3 @@
-/* Copyright 2019 SiFive, Inc */
-/* SPDX-License-Identifier: Apache-2.0 */
-
 #define METAL_MSTATUS_MIE_SHIFT 8
 #define METAL_MSTATUS_MPP_M     3
 #define METAL_MSTATUS_MPP_SHIFT 11
@@ -11,16 +8,19 @@
  *
  * Trigger a machine-mode trap with exception code ecode
  */
- #ifdef __IASMRISCV__
-    MODULE ?trap
+#ifdef __IASMRISCV__
+#include "iarMacros.m"
+#include "iarCfi.m"
 
-    PUBLIC _metal_trap
+      MODULE  ?trap
 
-    SECTION `.text`:CODE:NOROOT(2)
-    CODE    
-   /*.type _metal_trap, @function*/
- #else
+      PUBLIC _metal_trap
 
+      SECTION `.text`:CODE:NOROOT(2)
+      CODE
+ /*.type _metal_trap, @function*/
+#else    
+ 
 .global _metal_trap
 .type _metal_trap, @function
 #endif
@@ -63,18 +63,31 @@ _metal_trap:
     jr t0
 
 
-/* For sanity's sake we set up an early trap vector that just does nothing.  If
- * you end up here then there's a bug in the early boot code somewhere. */
+#ifdef __IASMRISCV__
       SECTION `.text.metal.init.trapvec`:CODE:NOROOT(2)
-      CODE
-        CfiBlk 2,early_trap_vector
- 
+            
+            CODE
+            PUBLIC early_trap_vector
+       
 early_trap_vector:
         csrr t0, mcause
         csrr t1, mepc
         csrr t2, mtval
         j early_trap_vector
-        CfiEnd  2
+
+#else
+ 
+.section .text.metal.init.trapvec
+.global early_trap_vector
+.align 2
+early_trap_vector:
+    .cfi_startproc
+    csrr t0, mcause
+    csrr t1, mepc
+    csrr t2, mtval
+    j early_trap_vector
+    .cfi_endproc
+#endif
 
 #ifdef __IASMRISCV__
     END

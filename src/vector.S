@@ -103,6 +103,9 @@
 #endif
 .option norvc
 .global __metal_vector_table
+
+#endif
+
 __metal_vector_table:
 IRQ_0:
         j metal_interrupt_vector_handler

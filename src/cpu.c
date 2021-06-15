@@ -4,6 +4,10 @@
 #include <metal/cpu.h>
 #include <metal/machine.h>
 
+#ifdef __ICCRISCV__
+#include <intrinsics.h>
+#endif
+
 struct metal_cpu *metal_cpu_get(unsigned int hartid) {
     if (hartid < __METAL_DT_MAX_HARTS) {
         return (struct metal_cpu *)__metal_cpu_table[hartid];
@@ -14,7 +18,11 @@ struct metal_cpu *metal_cpu_get(unsigned int hartid) {
 int metal_cpu_get_current_hartid() {
 #ifdef __riscv
     int mhartid;
+#ifndef __ICCRISCV__
     __asm__ volatile("csrr %0, mhartid" : "=r"(mhartid));
+#else
+    mhartid = __read_csr(_CSR_MHARTID);
+#endif
     return mhartid;
 #endif
 }

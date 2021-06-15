@@ -214,6 +214,19 @@ l3:
 
         CfiEnd  1
 
+/* For sanity's sake we set up an early trap vector that just does nothing.  If
+ * you end up here then there's a bug in the early boot code somewhere. */
+      SECTION `.text.metal.init.trapvec`:CODE:NOROOT(2)
+      CODE
+        CfiBlk 2,early_trap_vector
+ 
+early_trap_vector:
+        csrr t0, mcause
+        csrr t1, mepc
+        csrr t2, mtval
+        j early_trap_vector
+        CfiEnd  2
+
 /* The GCC port might not emit a __register_frame_info symbol, which eventually
  * results in a weak undefined reference that eventually causes crash when it
  * is dereference early in boot.  We really shouldn't need to put this here,

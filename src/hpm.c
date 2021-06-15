@@ -126,6 +126,8 @@ int metal_hpm_disable(struct metal_cpu *gcpu) {
     /* Check if pointer is NULL */
     if (gcpu) {
         /* Disable counter access */
+      /*
+TODO: Fix this
         __asm__ __volatile__("la %0, 1f \n\t"
                              "csrr %1, mtvec \n\t"
                              "csrw mtvec, %0 \n\t"
@@ -134,7 +136,7 @@ int metal_hpm_disable(struct metal_cpu *gcpu) {
                              "1: \n\t"
                              "csrw mtvec, %1 \n\t"
                              : "+r"(val), "+r"(temp));
-
+        */
         /* TODO: Disable all counters */
         /* __asm__ __volatile__("csrw mcountinhibit, zero"); */
 
@@ -215,6 +217,8 @@ int metal_hpm_enable_access(struct metal_cpu *gcpu, metal_hpm_counter counter) {
         return METAL_HPM_RET_NOK;
 
     /* Set trap exit, to handle illegal instruction trap. */
+    /*
+TODO: FIX THIS
     __asm__ __volatile__("la %0, 1f \n\t"
                          "csrr %1, mtvec \n\t"
                          "csrw mtvec, %0 \n\t"
@@ -226,6 +230,8 @@ int metal_hpm_enable_access(struct metal_cpu *gcpu, metal_hpm_counter counter) {
                          "csrw mtvec, %1 \n\t"
                          : "+r"(val), "+r"(temp)
                          : "r"(1 << counter));
+    */
+    
 
     return METAL_HPM_RET_OK;
 }
@@ -240,6 +246,8 @@ int metal_hpm_disable_access(struct metal_cpu *gcpu,
         return METAL_HPM_RET_NOK;
 
     /* Set trap exit, to handle illegal instruction trap. */
+    /*
+TODO: FIX THIS
     __asm__ __volatile__("la %0, 1f \n\t"
                          "csrr %1, mtvec \n\t"
                          "csrw mtvec, %0 \n\t"
@@ -251,8 +259,9 @@ int metal_hpm_disable_access(struct metal_cpu *gcpu,
                          "csrw mtvec, %1 \n\t"
                          : "+r"(val), "+r"(temp)
                          : "r"(~(1 << counter)));
-
     return METAL_HPM_RET_OK;
+*/
+    return METAL_HPM_RET_NOK;
 }
 
 unsigned long long metal_hpm_read_counter(struct metal_cpu *gcpu,

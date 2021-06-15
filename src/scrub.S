@@ -5,6 +5,7 @@
  * Scrub memory with zeroes
  */
 
+#ifndef __IASMRISCV__
 /* Keep it in metal.init section with _enter */
 .section .text.metal.init.scrub
 /* Disable linker relaxation */
@@ -129,3 +130,109 @@ skip_scrub:
     ret
 
 .option pop
+
+#else
+
+#include "iarMacros.m"
+#include "iarCfi.m"
+
+      MODULE  ?metal_mem_scrub
+
+      PUBLIC  __metal_mem_scrub
+      PUBLIC  __metal_memory_scrub
+      
+      SECTION CSTACK:DATA:NOROOT(2)
+
+      SECTION `.text.metal.init.scrub`:CODE:NOROOT(2)
+      CODE
+
+      CfiCom  ra,1,1
+      CfiCom  ra,1,2
+
+        CfiBlk 1,__metal_mem_scrub
+        CALL_GRAPH_ROOT __metal_mem_scrub, "Reset"    
+
+__metal_mem_scrub:
+    
+    /* Inform the debugger that there is nowhere to backtrace past __metal_enter. */
+        cfi ?RET Undefined
+    
+    
+    /* The absolute first thing that must happen is configuring the global
+     * pointer register, which must be done with relaxation disabled because
+     * it's not valid to obtain the address of any symbol without GP
+     * configured.  The C environment might go ahead and do this again, but
+     * that's safe as it's a fixed register. */
+        EXTWEAK  __iar_static_base$$GPREL
+        .option push
+        .option norelax
+        la gp, __iar_static_base$$GPREL
+        .option pop
+        
+         /* Disable machine interrupts,
+    restore previous mstatus value at exit */
+    li      a3, 8
+    csrrc   t1, mstatus, a3
+
+#if __riscv_xlen == 32
+    addi    t0, x0, 4
+l1:
+    blt     a1, t0, l2
+    andi    a2, a0, 3
+    beqz    a2, l3
+l2:
+    sb      x0, 0(a0)
+    addi    a0, a0, 1
+    addi    a1, a1, -1
+    bgtz    a1, 1b
+    csrw    mstatus, t1
+    ret
+l3:
+    sw      x0, 0(a0)
+    addi    a0, a0, 4
+    addi    a1, a1, -4
+    bgtz    a1, 1b
+    csrw    mstatus, t1
+    ret
+#else
+    addi    t0, x0, 8
+l1:
+    blt     a1, t0, 2f
+    andi    a2, a0, 7
+    beqz    a2, 3f
+l2:
+    sb      x0, 0(a0)
+    addi    a0, a0, 1
+    addi    a1, a1, -1
+    bgtz    a1, 1b
+    csrw    mstatus, t1
+    ret
+l3:
+    sd      x0, 0(a0)
+    addi    a0, a0, 8
+    addi    a1, a1, -8
+    bgtz    a1, 1b
+    csrw    mstatus, t1
+    ret
+ #endif
+
+/* .type __metal_memory_scrub, @function */
+
+__metal_memory_scrub:
+/* Zero out specified memory regions */
+mms_l1:
+#if __riscv_xlen == 32
+    sw      x0, 0(t1)
+    addi    t1, t1, 4
+    blt     t1, t2, 1b
+#else
+    sd      x0, 0(t1)
+    addi    t1, t1, 8
+    blt     t1, t2, 1b
+#endif
+    ret
+    
+    
+    
+
+#endif
