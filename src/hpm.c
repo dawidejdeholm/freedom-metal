@@ -120,14 +120,17 @@ int metal_hpm_init(struct metal_cpu *gcpu) {
 }
 
 int metal_hpm_disable(struct metal_cpu *gcpu) {
+#ifdef __ICCRISCV__
+    /* TODO: Implement this! */
+    return METAL_HPM_RET_NOK;
+#else
     struct __metal_driver_cpu *cpu = (void *)gcpu;
     uintptr_t temp = 0, val = 0;
 
     /* Check if pointer is NULL */
     if (gcpu) {
         /* Disable counter access */
-      /*
-TODO: Fix this
+
         __asm__ __volatile__("la %0, 1f \n\t"
                              "csrr %1, mtvec \n\t"
                              "csrw mtvec, %0 \n\t"
@@ -136,7 +139,7 @@ TODO: Fix this
                              "1: \n\t"
                              "csrw mtvec, %1 \n\t"
                              : "+r"(val), "+r"(temp));
-        */
+
         /* TODO: Disable all counters */
         /* __asm__ __volatile__("csrw mcountinhibit, zero"); */
 
@@ -146,6 +149,7 @@ TODO: Fix this
     }
 
     return METAL_HPM_RET_OK;
+#endif
 }
 
 int metal_hpm_set_event(struct metal_cpu *gcpu, metal_hpm_counter counter,
@@ -209,6 +213,10 @@ int metal_hpm_clr_event(struct metal_cpu *gcpu, metal_hpm_counter counter,
 }
 
 int metal_hpm_enable_access(struct metal_cpu *gcpu, metal_hpm_counter counter) {
+#ifdef __ICCRISCV__
+    /* TODO: Implement this! */
+    return METAL_HPM_RET_NOK;
+#else
     struct __metal_driver_cpu *cpu = (void *)gcpu;
     uintptr_t temp = 0, val = 0;
 
@@ -217,8 +225,7 @@ int metal_hpm_enable_access(struct metal_cpu *gcpu, metal_hpm_counter counter) {
         return METAL_HPM_RET_NOK;
 
     /* Set trap exit, to handle illegal instruction trap. */
-    /*
-TODO: FIX THIS
+
     __asm__ __volatile__("la %0, 1f \n\t"
                          "csrr %1, mtvec \n\t"
                          "csrw mtvec, %0 \n\t"
@@ -230,14 +237,17 @@ TODO: FIX THIS
                          "csrw mtvec, %1 \n\t"
                          : "+r"(val), "+r"(temp)
                          : "r"(1 << counter));
-    */
-    
 
     return METAL_HPM_RET_OK;
+#endif
 }
 
 int metal_hpm_disable_access(struct metal_cpu *gcpu,
                              metal_hpm_counter counter) {
+#ifdef __ICCRISCV__
+    /* TODO: Implement this! */
+    return METAL_HPM_RET_NOK;
+#else
     struct __metal_driver_cpu *cpu = (void *)gcpu;
     uintptr_t temp = 0, val = 0;
 
@@ -246,8 +256,7 @@ int metal_hpm_disable_access(struct metal_cpu *gcpu,
         return METAL_HPM_RET_NOK;
 
     /* Set trap exit, to handle illegal instruction trap. */
-    /*
-TODO: FIX THIS
+
     __asm__ __volatile__("la %0, 1f \n\t"
                          "csrr %1, mtvec \n\t"
                          "csrw mtvec, %0 \n\t"
@@ -260,8 +269,7 @@ TODO: FIX THIS
                          : "+r"(val), "+r"(temp)
                          : "r"(~(1 << counter)));
     return METAL_HPM_RET_OK;
-*/
-    return METAL_HPM_RET_NOK;
+#endif
 }
 
 unsigned long long metal_hpm_read_counter(struct metal_cpu *gcpu,
