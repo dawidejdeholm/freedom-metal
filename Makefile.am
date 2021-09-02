@@ -38,7 +38,6 @@ nobase_include_HEADERS += \
 	metal/drivers/riscv_clint0.h \
 	metal/drivers/riscv_cpu.h \
 	metal/drivers/riscv_plic0.h \
-	metal/drivers/sifive_remapper2.h \
 	metal/drivers/sifive_buserror0.h \
 	metal/drivers/sifive_ccache0.h \
 	metal/drivers/sifive_clic0.h \
@@ -54,10 +53,7 @@ nobase_include_HEADERS += \
 	metal/drivers/sifive_gpio0.h \
 	metal/drivers/sifive_i2c0.h \
 	metal/drivers/sifive_l2pf0.h \
-	metal/drivers/sifive_l2pf1.h \
 	metal/drivers/sifive_local-external-interrupts0.h \
-	metal/drivers/sifive_pl2cache0.h \
-	metal/drivers/sifive_prci0.h \
 	metal/drivers/sifive_pwm0.h \
 	metal/drivers/sifive_rtc0.h \
 	metal/drivers/sifive_spi0.h \
@@ -67,7 +63,6 @@ nobase_include_HEADERS += \
 	metal/drivers/sifive_simuart0.h \
 	metal/drivers/sifive_wdog0.h \
 	metal/drivers/ucb_htif0.h \
-	metal/remapper.h \
 	metal/atomic.h \
 	metal/button.h \
 	metal/cache.h \
@@ -86,9 +81,7 @@ nobase_include_HEADERS += \
 	metal/lim.h \
 	metal/lock.h \
 	metal/memory.h \
-	metal/nmi.h \
 	metal/pmp.h \
-	metal/prci.h \
 	metal/privilege.h \
 	metal/pwm.h\
 	metal/rtc.h \
@@ -115,7 +108,6 @@ libmetal_a_SOURCES = \
 	src/drivers/riscv_clint0.c \
 	src/drivers/riscv_cpu.c \
 	src/drivers/riscv_plic0.c \
-	src/drivers/sifive_remapper2.c \
 	src/drivers/sifive_buserror0.c \
 	src/drivers/sifive_ccache0.c \
 	src/drivers/sifive_clic0.c \
@@ -131,10 +123,7 @@ libmetal_a_SOURCES = \
 	src/drivers/sifive_gpio0.c \
 	src/drivers/sifive_i2c0.c \
 	src/drivers/sifive_l2pf0.c \
-	src/drivers/sifive_l2pf1.c \
 	src/drivers/sifive_local-external-interrupts0.c \
-	src/drivers/sifive_pl2cache0.c \
-	src/drivers/sifive_prci0.c \
 	src/drivers/sifive_pwm0.c \
 	src/drivers/sifive_rtc0.c \
 	src/drivers/sifive_spi0.c \
@@ -144,7 +133,6 @@ libmetal_a_SOURCES = \
 	src/drivers/sifive_simuart0.c \
 	src/drivers/sifive_wdog0.c \
 	src/drivers/ucb_htif0.c \
-	src/remapper.c \
 	src/atomic.c \
 	src/button.c \
 	src/cache.c \
@@ -162,7 +150,6 @@ libmetal_a_SOURCES = \
 	src/lock.c \
 	src/memory.c \
 	src/pmp.c \
-	src/prci.c \
 	src/privilege.c \
 	src/pwm.c\
 	src/rtc.c \

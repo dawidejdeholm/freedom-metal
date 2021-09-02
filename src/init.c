@@ -2,10 +2,6 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 
 #include <metal/init.h>
-#include <metal/machine/platform.h>
-
-#include <metal/drivers/sifive_ccache0.h>
-#include <metal/drivers/sifive_l2pf1.h>
 
 /*
  * These function pointers are created by the linker script
@@ -25,19 +21,6 @@ void metal_init(void) {
         return;
     }
     init_done = 1;
-
-#ifdef METAL_SIFIVE_PL2CACHE0
-    sifive_pl2cache0_init();
-#endif /* METAL_SIFIVE_PL2CACHE0 */
-
-#ifdef METAL_SIFIVE_CCACHE0
-    sifive_ccache0_init();
-#endif /* METAL_SIFIVE_CCACHE0 */
-
-#ifdef METAL_SIFIVE_L2PF1
-    /* Do L2 Stride Prefetcher initialization. */
-    sifive_l2pf1_init();
-#endif /* METAL_SIFIVE_L2PF1 */
 
     if (&metal_constructors_end <= &metal_constructors_start) {
         return;
