@@ -41,7 +41,15 @@ _start:
    * to just "addi gp, gp, 0". */
 .option push
 .option norelax
+#ifdef __riscv_cmodel_compact
+1:
+  auipc a0, %pcrel_hi(__global_pointer__)
+  addi a0, a0, %pcrel_lo(1b)
+  ld   gp, 0(a0)
+  add  gp, gp, a0
+#else
   la gp, __global_pointer$
+#endif
 .option pop
 
   /* Stack pointer is expected to be initialized before _start */
@@ -57,9 +65,15 @@ _start:
    * is optional: if the METAL provides an environment in which this relocation
    * is not necessary then it must simply set metal_segment_data_source_start to
    * be equal to metal_segment_data_target_start. */
+#ifdef __riscv_cmodel_compact
+  la.got.gprel t0, metal_segment_data_source_start
+  lla.gprel t1, metal_segment_data_target_start
+  lla.gprel t2, metal_segment_data_target_end
+#else
   la t0, metal_segment_data_source_start
   la t1, metal_segment_data_target_start
   la t2, metal_segment_data_target_end
+#endif
 
   beq t0, t1, 2f
   bge t1, t2, 2f
@@ -81,9 +95,15 @@ _start:
 2:
 
   /* Copy the ITIM section */
+#ifdef __riscv_cmodel_compact
+  la.got.gprel t0, metal_segment_itim_source_start
+  la.got.gprel t1, metal_segment_itim_target_start
+  la.got.gprel t2, metal_segment_itim_target_end
+#else
   la t0, metal_segment_itim_source_start
   la t1, metal_segment_itim_target_start
   la t2, metal_segment_itim_target_end
+#endif
 
   beq t0, t1, 2f
   bge t1, t2, 2f
@@ -111,9 +131,15 @@ _start:
 2:
 
   /* Copy the LIM section */
+#ifdef __riscv_cmodel_compact
+  la.got.gprel t0, metal_segment_lim_source_start
+  lla.gprel t1, metal_segment_lim_target_start
+  lla.gprel t2, metal_segment_lim_target_end
+#else
   la t0, metal_segment_lim_source_start
   la t1, metal_segment_lim_target_start
   la t2, metal_segment_lim_target_end
+#endif
 
   beq t0, t1, 2f
   bge t1, t2, 2f
@@ -139,8 +165,13 @@ _start:
   fence.i
 
   /* Zero the BSS segment. */
+#ifdef __riscv_cmodel_compact
+  lla.gprel t1, metal_segment_bss_target_start
+  lla.gprel t2, metal_segment_bss_target_end
+#else
   la t1, metal_segment_bss_target_start
   la t2, metal_segment_bss_target_end
+#endif
 
   bge t1, t2, 2f
 
@@ -158,7 +189,11 @@ _start:
 
   /* Set TLS pointer */
   .weak __tls_base	
+#ifdef __riscv_cmodel_compact
+  lla.gprel tp, __tls_base
+#else
   la tp, __tls_base
+#endif
 
   /* At this point we're in an environment that can execute C code.  The first
    * thing to do is to make the callback to the parent environment if it's been
@@ -217,7 +252,9 @@ _skip_init:
   csrwi fcsr, 0
 1:
 
-  /* Check for vector extension support and enable it if found */
+  /* Check for vector extension support and enable it if found.
+   * Omit if toolchain doesn't support the vector extension. */
+#ifdef __riscv_v
   csrr a5, misa
   li a4, 0x200000
   and a5, a5, a4
@@ -225,7 +262,10 @@ _skip_init:
   csrr a5, mstatus
   ori a5, a5, 0x200
   csrw mstatus, a5
+  vsetivli x0, 0, e8, m1, ta, ma
+  csrwi vcsr, 0
 1:
+#endif
 
   /* This is a C runtime, so main() is defined to have some arguments.  Since
    * there's nothing sane the METAL can pass we don't bother with that but
@@ -292,7 +332,7 @@ secondary_main:
 /* This shim allows main() to be passed a set of arguments that can satisfy the
  * requirements of the C API. */
 .section .rodata.libgloss.start
-.align 8
+.balign 8
 argv:
 .dc.a name
 envp:
@@ -300,3 +340,12 @@ envp:
 name:
 .asciz "libgloss"
 
+#ifdef __riscv_cmodel_compact
+/* Compact stub.  */
+  .section .text.__global_pointer__, "aMG",@progbits, 8, __global_pointer__, comdat
+  .align 3
+  .global __global_pointer__
+  .type   __global_pointer__, object
+__global_pointer__:
+  .quad   __global_pointer$ -.
+#endif

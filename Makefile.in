@@ -226,6 +226,7 @@ am_libmetal_a_OBJECTS = src/drivers/fixed-clock.$(OBJEXT) \
 	src/drivers/riscv_clint0.$(OBJEXT) \
 	src/drivers/riscv_cpu.$(OBJEXT) \
 	src/drivers/riscv_plic0.$(OBJEXT) \
+	src/drivers/sifive_remapper2.$(OBJEXT) \
 	src/drivers/sifive_buserror0.$(OBJEXT) \
 	src/drivers/sifive_ccache0.$(OBJEXT) \
 	src/drivers/sifive_clic0.$(OBJEXT) \
@@ -241,7 +242,10 @@ am_libmetal_a_OBJECTS = src/drivers/fixed-clock.$(OBJEXT) \
 	src/drivers/sifive_gpio0.$(OBJEXT) \
 	src/drivers/sifive_i2c0.$(OBJEXT) \
 	src/drivers/sifive_l2pf0.$(OBJEXT) \
+	src/drivers/sifive_l2pf1.$(OBJEXT) \
 	src/drivers/sifive_local-external-interrupts0.$(OBJEXT) \
+	src/drivers/sifive_pl2cache0.$(OBJEXT) \
+	src/drivers/sifive_prci0.$(OBJEXT) \
 	src/drivers/sifive_pwm0.$(OBJEXT) \
 	src/drivers/sifive_rtc0.$(OBJEXT) \
 	src/drivers/sifive_spi0.$(OBJEXT) \
@@ -256,12 +260,12 @@ am_libmetal_a_OBJECTS = src/drivers/fixed-clock.$(OBJEXT) \
 	src/trap.$(OBJEXT) src/gpio.$(OBJEXT) src/hpm.$(OBJEXT) \
 	src/i2c.$(OBJEXT) src/init.$(OBJEXT) src/interrupt.$(OBJEXT) \
 	src/led.$(OBJEXT) src/lock.$(OBJEXT) src/memory.$(OBJEXT) \
-	src/pmp.$(OBJEXT) src/privilege.$(OBJEXT) src/pwm.$(OBJEXT) \
-	src/rtc.$(OBJEXT) src/shutdown.$(OBJEXT) src/spi.$(OBJEXT) \
-	src/switch.$(OBJEXT) src/synchronize_harts.$(OBJEXT) \
+	src/pmp.$(OBJEXT) src/privilege.$(OBJEXT) src/prci.$(OBJEXT) \
+	src/pwm.$(OBJEXT) src/rtc.$(OBJEXT) src/shutdown.$(OBJEXT) \
+	src/spi.$(OBJEXT) src/switch.$(OBJEXT) src/synchronize_harts.$(OBJEXT) \
 	src/timer.$(OBJEXT) src/time.$(OBJEXT) src/trap.$(OBJEXT) \
 	src/tty.$(OBJEXT) src/uart.$(OBJEXT) src/vector.$(OBJEXT) \
-	src/watchdog.$(OBJEXT)
+	src/watchdog.$(OBJEXT) src/remapper.$(OBJEXT)
 libmetal_a_OBJECTS = $(am_libmetal_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -458,6 +462,7 @@ nobase_include_HEADERS = metal/machine.h metal/machine/inline.h \
 	metal/machine/platform.h metal/drivers/fixed-clock.h \
 	metal/drivers/fixed-factor-clock.h \
 	metal/drivers/riscv_clint0.h metal/drivers/riscv_cpu.h \
+	metal/drivers/sifive_remapper2.h \
 	metal/drivers/riscv_plic0.h metal/drivers/sifive_buserror0.h \
 	metal/drivers/sifive_ccache0.h metal/drivers/sifive_clic0.h \
 	metal/drivers/sifive_fe310-g000_hfrosc.h \
@@ -471,7 +476,10 @@ nobase_include_HEADERS = metal/machine.h metal/machine/inline.h \
 	metal/drivers/sifive_gpio-switches.h \
 	metal/drivers/sifive_gpio0.h metal/drivers/sifive_i2c0.h \
 	metal/drivers/sifive_l2pf0.h \
+	metal/drivers/sifive_l2pf1.h \
 	metal/drivers/sifive_local-external-interrupts0.h \
+	metal/drivers/sifive_pl2cache0.h \
+        metal/drivers/sifive_prci0.h \
 	metal/drivers/sifive_pwm0.h metal/drivers/sifive_rtc0.h \
 	metal/drivers/sifive_spi0.h metal/drivers/sifive_test0.h \
 	metal/drivers/sifive_trace.h metal/drivers/sifive_uart0.h \
@@ -481,10 +489,11 @@ nobase_include_HEADERS = metal/machine.h metal/machine/inline.h \
 	metal/compiler.h metal/cpu.h metal/csr.h metal/gpio.h \
 	metal/hpm.h metal/i2c.h metal/init.h \
 	metal/interrupt.h metal/io.h metal/itim.h metal/led.h \
-	metal/lim.h metal/lock.h metal/memory.h metal/pmp.h \
-	metal/privilege.h metal/pwm.h metal/rtc.h metal/shutdown.h \
-	metal/scrub.h metal/spi.h metal/switch.h metal/timer.h \
-	metal/time.h metal/tty.h metal/uart.h metal/watchdog.h
+	metal/lim.h metal/lock.h metal/memory.h metal/nmi.h metal/pmp.h \
+	metal/prci.h metal/privilege.h metal/pwm.h metal/rtc.h \
+	metal/shutdown.h metal/scrub.h metal/spi.h metal/switch.h \
+	metal/timer.h metal/time.h metal/tty.h metal/uart.h metal/watchdog.h \
+	metal/remapper.h
 
 # This will generate these sources before the compilation step
 BUILT_SOURCES = \
@@ -504,6 +513,7 @@ libmetal_a_SOURCES = \
 	src/drivers/riscv_clint0.c \
 	src/drivers/riscv_cpu.c \
 	src/drivers/riscv_plic0.c \
+	src/drivers/sifive_remapper2.c \
 	src/drivers/sifive_buserror0.c \
 	src/drivers/sifive_ccache0.c \
 	src/drivers/sifive_clic0.c \
@@ -519,7 +529,10 @@ libmetal_a_SOURCES = \
 	src/drivers/sifive_gpio0.c \
 	src/drivers/sifive_i2c0.c \
 	src/drivers/sifive_l2pf0.c \
+	src/drivers/sifive_l2pf1.c \
 	src/drivers/sifive_local-external-interrupts0.c \
+	src/drivers/sifive_pl2cache0.c \
+	src/drivers/sifive_prci0.c \
 	src/drivers/sifive_pwm0.c \
 	src/drivers/sifive_rtc0.c \
 	src/drivers/sifive_spi0.c \
@@ -529,6 +542,7 @@ libmetal_a_SOURCES = \
 	src/drivers/sifive_simuart0.c \
 	src/drivers/sifive_wdog0.c \
 	src/drivers/ucb_htif0.c \
+	src/remapper.c \
 	src/atomic.c \
 	src/button.c \
 	src/cache.c \
@@ -546,6 +560,7 @@ libmetal_a_SOURCES = \
 	src/lock.c \
 	src/memory.c \
 	src/pmp.c \
+	src/prci.c \
 	src/privilege.c \
 	src/pwm.c\
 	src/rtc.c \
@@ -780,6 +795,8 @@ src/drivers/riscv_cpu.$(OBJEXT): src/drivers/$(am__dirstamp) \
 	src/drivers/$(DEPDIR)/$(am__dirstamp)
 src/drivers/riscv_plic0.$(OBJEXT): src/drivers/$(am__dirstamp) \
 	src/drivers/$(DEPDIR)/$(am__dirstamp)
+src/drivers/sifive_remapper2.$(OBJEXT): src/drivers/$(am__dirstamp) \
+	src/drivers/$(DEPDIR)/$(am__dirstamp)
 src/drivers/sifive_buserror0.$(OBJEXT): src/drivers/$(am__dirstamp) \
 	src/drivers/$(DEPDIR)/$(am__dirstamp)
 src/drivers/sifive_ccache0.$(OBJEXT): src/drivers/$(am__dirstamp) \
@@ -818,8 +835,14 @@ src/drivers/sifive_i2c0.$(OBJEXT): src/drivers/$(am__dirstamp) \
 	src/drivers/$(DEPDIR)/$(am__dirstamp)
 src/drivers/sifive_l2pf0.$(OBJEXT): src/drivers/$(am__dirstamp) \
 	src/drivers/$(DEPDIR)/$(am__dirstamp)
+src/drivers/sifive_l2pf1.$(OBJEXT): src/drivers/$(am__dirstamp) \
+	src/drivers/$(DEPDIR)/$(am__dirstamp)
 src/drivers/sifive_local-external-interrupts0.$(OBJEXT):  \
 	src/drivers/$(am__dirstamp) \
+	src/drivers/$(DEPDIR)/$(am__dirstamp)
+src/drivers/sifive_pl2cache0.$(OBJEXT): src/drivers/$(am__dirstamp) \
+	src/drivers/$(DEPDIR)/$(am__dirstamp)
+src/drivers/sifive_prci0.$(OBJEXT): src/drivers/$(am__dirstamp) \
 	src/drivers/$(DEPDIR)/$(am__dirstamp)
 src/drivers/sifive_pwm0.$(OBJEXT): src/drivers/$(am__dirstamp) \
 	src/drivers/$(DEPDIR)/$(am__dirstamp)
@@ -845,6 +868,8 @@ src/$(am__dirstamp):
 src/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/$(DEPDIR)
 	@: > src/$(DEPDIR)/$(am__dirstamp)
+src/remapper.$(OBJEXT): src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
 src/atomic.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/button.$(OBJEXT): src/$(am__dirstamp) \
@@ -936,6 +961,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@gloss/$(DEPDIR)/sys_wait.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gloss/$(DEPDIR)/sys_write.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@segger/$(DEPDIR)/SEGGER_target_metal.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/remapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/atomic.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/button.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/cache.Po@am__quote@
@@ -972,6 +998,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/drivers/$(DEPDIR)/riscv_clint0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/drivers/$(DEPDIR)/riscv_cpu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/drivers/$(DEPDIR)/riscv_plic0.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/drivers/$(DEPDIR)/sifive_remapper2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/drivers/$(DEPDIR)/sifive_buserror0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/drivers/$(DEPDIR)/sifive_ccache0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/drivers/$(DEPDIR)/sifive_clic0.Po@am__quote@
@@ -987,7 +1014,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/drivers/$(DEPDIR)/sifive_gpio0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/drivers/$(DEPDIR)/sifive_i2c0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/drivers/$(DEPDIR)/sifive_l2pf0.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/drivers/$(DEPDIR)/sifive_l2pf1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/drivers/$(DEPDIR)/sifive_local-external-interrupts0.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/drivers/$(DEPDIR)/sifive_pl2cache0.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/drivers/$(DEPDIR)/sifive_prci0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/drivers/$(DEPDIR)/sifive_pwm0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/drivers/$(DEPDIR)/sifive_rtc0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/drivers/$(DEPDIR)/sifive_simuart0.Po@am__quote@
